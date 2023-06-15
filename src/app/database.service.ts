@@ -78,4 +78,81 @@ export class DatabaseService {
         };
         return this.getData(request);
     }
+
+    public getCountOfGrabbedChestByPlayer(playerId: string): Observable<number> {
+        const request = {
+            aggregate: 'chest_grabbed',
+            pipeline: [{ $match: { playerid: playerId } }, { $group: { _id: null, count: { $sum: 1 } } }],
+            cursor: { batchSize: 0 },
+        };
+        return this.getData(request).pipe(map((response: { count: number }[]) => response[0].count));
+    }
+
+    public getCountOfAttacksByPlayer(playerId: string): Observable<number> {
+        const request = {
+            aggregate: 'user_attacks',
+            pipeline: [{ $match: { id: playerId } }, { $group: { _id: null, count: { $sum: 1 } } }],
+            cursor: { batchSize: 0 },
+        };
+        return this.getData(request).pipe(map((response: { count: number }[]) => response[0].count));
+    }
+
+    public getCountOfActiveByPlayer(playerId: string): Observable<number> {
+        const request = {
+            aggregate: 'users_statuses',
+            pipeline: [{ $match: { id: playerId } }, { $group: { _id: '$status', count: { $sum: 1 } } }],
+            cursor: { batchSize: 0 },
+        };
+        return this.getData(request).pipe(map((response: { _id: string; count: number }[]) => response[0].count));
+    }
+
+    public getAllStatusesByPlayer(playerId: string): Observable<{ x: number; y: number; count: number }> {
+        const request = {
+            aggregate: 'users_statuses',
+            pipeline: [
+                { $match: { id: playerId } },
+                { $project: { _id: 0, coordinates: 1 } },
+                { $unwind: '$coordinates' },
+                {
+                    $group: {
+                        _id: { x: '$coordinates.x', y: '$coordinates.y' },
+                        count: { $sum: 1 },
+                    },
+                },
+            ],
+            cursor: { batchSize: 0 },
+        };
+        return this.getData(request).pipe(
+            map((items) =>
+                items.map((item: { _id: { x: number; y: number }; count: number }) => ({
+                    x: item._id.x,
+                    y: item._id.y,
+                    count: item.count,
+                }))
+            ),
+            map((items) =>
+                items.sort(
+                    (
+                        item1: { x: number; y: number; count: number },
+                        item2: { x: number; y: number; count: number }
+                    ) => {
+                        //first sort by x and second by y
+                        if (item1.x > item2.x) {
+                            return 1;
+                        } else if (item1.x < item2.x) {
+                            return -1;
+                        } else {
+                            if (item1.y > item2.y) {
+                                return 1;
+                            } else if (item1.y < item2.y) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    }
+                )
+            )
+        );
+    }
 }

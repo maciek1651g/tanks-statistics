@@ -8,11 +8,24 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { HttpClientModule } from '@angular/common/http';
+import { LoadingScreenComponent } from './components/loading-screen/loading-screen.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
-    declarations: [AppComponent, DashboardComponent],
-    imports: [BrowserModule, BrowserAnimationsModule, HttpClientModule, NgxChartsModule, InputTextModule, ButtonModule],
-    providers: [],
+    declarations: [AppComponent, DashboardComponent, LoadingScreenComponent, LoadingScreenComponent],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        NgxChartsModule,
+        InputTextModule,
+        ButtonModule,
+        ReactiveFormsModule,
+        ToastModule,
+    ],
+    providers: [MessageService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

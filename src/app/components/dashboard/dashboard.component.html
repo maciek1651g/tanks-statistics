@@ -2,69 +2,98 @@
     <h1>Statystyki</h1>
 
     <div class="search-bar">
-        <input type="text" pInputText placeholder="Wyszukaj..." />
-        <p-button label="Szukaj"></p-button>
+        <input type="text" pInputText placeholder="Wyszukaj..." [formControl]="playerId" />
+        <p-button label="Szukaj" (click)="onSearch()" [loading]="isButtonLoading"></p-button>
     </div>
+
+    <app-loading-screen *ngIf="loading"></app-loading-screen>
 
     <div class="charts">
-        <div class="chart">
-            <h2>Gracze z największą ilością zebranych skrzynek</h2>
-            <ngx-charts-bar-horizontal-2d
-                [view]="view"
-                [scheme]="colorScheme"
-                [schemeType]="schemeType"
-                [results]="chestPlayers"
-                [gradient]="gradient"
-                [xAxis]="showXAxis"
-                [yAxis]="showYAxis"
-                [legend]="false"
-                [legendPosition]="legendPosition"
-                [showXAxisLabel]="showXAxisLabel"
-                [showYAxisLabel]="showYAxisLabel"
-                [xAxisLabel]="'Liczba zebranych skrzynek'"
-                [yAxisLabel]="'Identyfikatory graczy'"
-                (select)="onSelect($event)"
-                (activate)="onActivate($event)"
-                (deactivate)="onDeactivate($event)"
-            >
-            </ngx-charts-bar-horizontal-2d>
-        </div>
+        <ng-container *ngIf="isPlayerIdValid">
+            <div style="display: flex; width: 100%; align-items: center; flex-direction: column">
+                <p>
+                    Player: <span>{{ playerId.value }}</span>
+                </p>
+                <div style="display: flex; width: 100%; justify-content: center">
+                    <div style="padding: 0 20px">
+                        <p>
+                            Liczba zebranych skrzynek: <span>{{ playerChestCount }}</span>
+                        </p>
+                    </div>
+                    <div style="padding: 0 20px">
+                        <p>
+                            Liczba ataków: <span>{{ playerAttackCount }}</span>
+                        </p>
+                    </div>
+                    <div style="padding: 0 20px">
+                        <p>
+                            Liczba ruchów: <span>{{ playerActiveCount }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container>
+            <div class="chart">
+                <h2>Gracze z największą ilością zebranych skrzynek</h2>
+                <ngx-charts-bar-horizontal-2d
+                    [view]="view"
+                    [scheme]="colorScheme"
+                    [schemeType]="schemeType"
+                    [results]="chestPlayers"
+                    [gradient]="gradient"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [legend]="false"
+                    [legendPosition]="legendPosition"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="'Liczba zebranych skrzynek'"
+                    [yAxisLabel]="'Identyfikatory graczy'"
+                    (select)="onSelect($event)"
+                    (activate)="onActivate($event)"
+                    (deactivate)="onDeactivate($event)"
+                >
+                </ngx-charts-bar-horizontal-2d>
+            </div>
 
-        <div class="chart">
-            <h2>Najczęściej atakujący gracze</h2>
-            <ngx-charts-pie-chart
-                [view]="view"
-                [scheme]="colorScheme"
-                [results]="attackPlayers"
-                [gradient]="gradient"
-                [legend]="false"
-                [legendPosition]="legendPosition"
-                [labels]="showLabels"
-                [doughnut]="isDoughnut"
-                (select)="onSelect($event)"
-                (activate)="onActivate($event)"
-                (deactivate)="onDeactivate($event)"
-            >
-            </ngx-charts-pie-chart>
-        </div>
+            <div class="chart">
+                <h2>Najczęściej atakujący gracze</h2>
+                <ngx-charts-pie-chart
+                    [view]="view"
+                    [scheme]="colorScheme"
+                    [results]="attackPlayers"
+                    [gradient]="gradient"
+                    [legend]="false"
+                    [legendPosition]="legendPosition"
+                    [labels]="showLabels"
+                    [doughnut]="isDoughnut"
+                    (select)="onSelect($event)"
+                    (activate)="onActivate($event)"
+                    (deactivate)="onDeactivate($event)"
+                >
+                </ngx-charts-pie-chart>
+            </div>
 
-        <div class="chart">
-            <h2>Najbardziej aktywni gracze</h2>
-            <ngx-charts-bar-vertical
-                [view]="view"
-                [scheme]="colorScheme"
-                [results]="activePlayers"
-                [gradient]="gradient"
-                [xAxis]="showXAxis"
-                [yAxis]="showYAxis"
-                [legend]="showLegend"
-                [showXAxisLabel]="showXAxisLabel"
-                [showYAxisLabel]="showYAxisLabel"
-                [xAxisLabel]="'Identyfikatory graczy'"
-                [yAxisLabel]="'Liczba ruchów'"
-                (select)="onSelect($event)"
-            >
-            </ngx-charts-bar-vertical>
-        </div>
+            <div class="chart">
+                <h2>Najbardziej aktywni gracze</h2>
+                <ngx-charts-bar-vertical
+                    [view]="view"
+                    [scheme]="colorScheme"
+                    [results]="activePlayers"
+                    [gradient]="gradient"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [legend]="showLegend"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="'Identyfikatory graczy'"
+                    [yAxisLabel]="'Liczba ruchów'"
+                    (select)="onSelect($event)"
+                >
+                </ngx-charts-bar-vertical>
+            </div>
+        </ng-container>
     </div>
+    <p-toast></p-toast>
 </div>
